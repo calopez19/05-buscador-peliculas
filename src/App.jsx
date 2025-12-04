@@ -8,7 +8,17 @@ function App() {
 
   return (
     <>
+      <header>
+
       <h1>App para buscar peliculas</h1>
+      <form action="" className="formulario">
+        <input type="text" className="buscador" placeholder='avengers, starwars....' />
+        <button type='submit'>Search movie</button>
+      </form>
+      </header>
+      <main>
+        peliculas
+      </main>
     </>
   )
 }
