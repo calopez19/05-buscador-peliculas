@@ -5,36 +5,49 @@ import { ListOfMovies, NoResults, Movies } from "./components/Movies";
 import { useMovies } from "./hooks/useMovies";
 import "./App.css";
 
-function App() {
-  const inputRef = useRef("aaaa");
-  const { mappedMovies } = useMovies();
-  const [query, setQuery] = useState("");
+function usesearch() {
+  const [search, updateSearch] = useState("");
   const [error, setError] = useState(null);
-
-  const handleSubmit = () => {
-    event.preventDefault();
-    const { query } = Object.fromEntries(new window.FormData(event.target));
-    console.log(query);
-  };
+  const isTheFirstInput = useRef(true);
 
   useEffect(() => {
-    if (query === "") {
+    console.log("new search");
+
+    if (isTheFirstInput.current) {
+      isTheFirstInput.current = search === "";
+      return;
+    }
+    if (search === "") {
       setError("No se puede buscar una pelicula vacia");
       return;
     }
-    if (query.match(/^\d+$/)) {
+    if (search.match(/^\d+$/)) {
       setError("No se puede buscar una pelicula solo con numeros");
       return;
     }
-    if (query.length < 3) {
+    if (search.length < 3) {
       setError("Nombre muy corto para buscar");
       return;
     }
-    setError(null)
-  }, [query]);
+    setError(null);
+  }, [search]);
+
+  return { search, error, updateSearch };
+}
+
+function App() {
+  const inputRef = useRef("");
+  const { mappedMovies } = useMovies();
+  const { search, error, updateSearch } = usesearch();
+
+  const handleSubmit = () => {
+    event.preventDefault();
+    console.log(search);
+  };
 
   const handleChange = (event) => {
-    setQuery(event.target.value);
+    const newsearch = event.target.value;
+    updateSearch(newsearch);
   };
   return (
     <>
@@ -43,7 +56,7 @@ function App() {
         <form onSubmit={handleSubmit} className="formulario">
           <input
             onChange={handleChange}
-            name="query"
+            name="search"
             ref={inputRef}
             type="text"
             className="buscador"
