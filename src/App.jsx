@@ -9,11 +9,11 @@ import "./App.css";
 function App() {
   const inputRef = useRef("");
   const { search, error, updateSearch } = usesearch();
-  const { movies,loading, getMovies } = useMovies({search});
+  const { movies,loading, searchMovies } = useMovies({search});
 
   const handleSubmit = () => {
     event.preventDefault();
-    getMovies();
+    searchMovies({search});
   };
 
   const handleChange = (event) => {
