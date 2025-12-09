@@ -1,6 +1,4 @@
-/**
- * Forced dark theme version
- */
+
 
 :root {
   --background-body: #202b38;
@@ -375,7 +373,7 @@ input[type='range'],
 select,
 button,
 textarea {
-  -webkit-appearance: none;
+  appearance: none;
 }
 
 textarea {

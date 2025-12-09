@@ -1,48 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import responseMovies from "./mocks/results.json";
 import withoutResults from "./mocks/no-results.json";
 import { ListOfMovies, NoResults, Movies } from "./components/Movies";
 import { useMovies } from "./hooks/useMovies";
+import { usesearch } from "./hooks/usesearch";
 import "./App.css";
-
-function usesearch() {
-  const [search, updateSearch] = useState("");
-  const [error, setError] = useState(null);
-  const isTheFirstInput = useRef(true);
-
-  useEffect(() => {
-    console.log("new search");
-
-    if (isTheFirstInput.current) {
-      isTheFirstInput.current = search === "";
-      return;
-    }
-    if (search === "") {
-      setError("No se puede buscar una pelicula vacia");
-      return;
-    }
-    if (search.match(/^\d+$/)) {
-      setError("No se puede buscar una pelicula solo con numeros");
-      return;
-    }
-    if (search.length < 3) {
-      setError("Nombre muy corto para buscar");
-      return;
-    }
-    setError(null);
-  }, [search]);
-
-  return { search, error, updateSearch };
-}
 
 function App() {
   const inputRef = useRef("");
-  const { mappedMovies } = useMovies();
   const { search, error, updateSearch } = usesearch();
+  const { movies,loading, getMovies } = useMovies({search});
 
   const handleSubmit = () => {
     event.preventDefault();
-    console.log(search);
+    getMovies();
   };
 
   const handleChange = (event) => {
@@ -50,7 +21,7 @@ function App() {
     updateSearch(newsearch);
   };
   return (
-    <>
+    <div className="page">
       <header>
         <h1>App para buscar peliculas</h1>
         <form onSubmit={handleSubmit} className="formulario">
@@ -67,9 +38,10 @@ function App() {
       </header>
       <main>
         {error && <p style={{ color: "red" }}>{error}</p>}
-        <Movies movies={mappedMovies}></Movies>
+        
+        <Movies movies={movies}></Movies>
       </main>
-    </>
+    </div>
   );
 }
 
