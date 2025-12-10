@@ -1,27 +1,34 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import responseMovies from "./mocks/results.json";
 import withoutResults from "./mocks/no-results.json";
 import { ListOfMovies, NoResults, Movies } from "./components/Movies";
 import { useMovies } from "./hooks/useMovies";
 import { usesearch } from "./hooks/usesearch";
 import "./App.css";
+import debounce from "just-debounce-it";
 
 function App() {
-  const [sort, setSort] = useState(false)
+  const [sort, setSort] = useState(false);
   const inputRef = useRef("");
   const { search, error, updateSearch } = usesearch();
-  const { movies, searchMovies } = useMovies({search, sort});
+  const { movies, searchMovies } = useMovies({ search, sort });
+
+  const debounceMovies = useCallback(
+    debounce((newsearch) => searchMovies({ search: newsearch }), 300),
+    [searchMovies]
+  );
 
   const handleSort = () => {
-    setSort(!sort)
-  }
+    setSort(!sort);
+  };
   const handleSubmit = () => {
     event.preventDefault();
-    searchMovies({search});
+    searchMovies({ search });
   };
 
   const handleChange = (event) => {
     const newsearch = event.target.value;
+    debounceMovies(newsearch);
     updateSearch(newsearch);
   };
   return (
@@ -43,7 +50,7 @@ function App() {
       </header>
       <main>
         {error && <p style={{ color: "red" }}>{error}</p>}
-        
+
         <Movies movies={movies}></Movies>
       </main>
     </div>
