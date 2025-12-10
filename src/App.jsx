@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import responseMovies from "./mocks/results.json";
 import withoutResults from "./mocks/no-results.json";
 import { ListOfMovies, NoResults, Movies } from "./components/Movies";
@@ -7,10 +7,14 @@ import { usesearch } from "./hooks/usesearch";
 import "./App.css";
 
 function App() {
+  const [sort, setSort] = useState(false)
   const inputRef = useRef("");
   const { search, error, updateSearch } = usesearch();
-  const { movies,loading, searchMovies } = useMovies({search});
+  const { movies, searchMovies } = useMovies({search, sort});
 
+  const handleSort = () => {
+    setSort(!sort)
+  }
   const handleSubmit = () => {
     event.preventDefault();
     searchMovies({search});
@@ -33,6 +37,7 @@ function App() {
             className="buscador"
             placeholder="avengers, starwars...."
           />
+          <input type="checkbox" onChange={handleSort} checked={sort} />
           <button type="submit">Search movie</button>
         </form>
       </header>
